@@ -1,0 +1,62 @@
+﻿@page
+@model Cbc.News.Dashboard.Pages.Stories.IndexModel
+@{
+    ViewData["Title"] = "Stories";
+}
+
+
+<div class="container py-4" style="min-height:75vh;">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <div>
+            <h1 class="mb-1"><i class="bi bi-newspaper text-success me-2"></i>Stories</h1>
+            <p class="text-muted mb-0">Articles ingérés depuis le flux RSS.</p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="feedFilter" class="form-label">Feed</label>
+                    <select id="feedFilter" class="form-select">
+                        <option value="">All</option>
+                        <option value="topstories">Top Stories</option>
+                        <option value="technology">Technology</option>
+                        <option value="montreal">Montreal</option>
+                        <option value="politics">Politics</option>
+                        <option value="business">Business</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="limitFilter" class="form-label">Limit</label>
+                    <select id="limitFilter" class="form-select">
+                        <option value="10">10</option>
+                        <option value="20" selected>20</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <button id="applyStoriesFilterBtn" class="btn btn-primary w-100">
+                        Apply filters
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="storiesGrid" class="row g-4 mt-2"></div>
+</div>
+
+@using System.Text.Json
+
+@section Scripts {
+    <script>
+        window.authConfig = {
+            token: @Html.Raw(JsonSerializer.Serialize(HttpContext.Session.GetString("token")))
+                };
+    </script>
+
+    <script src="~/js/stories/stories.js" asp-append-version="true"></script>
+}

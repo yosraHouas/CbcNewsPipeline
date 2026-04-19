@@ -1,0 +1,23 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: cbc_mongo
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_DATABASE: cbcnews
+    volumes:
+      - mongo_data:/data/db
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: cbc_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672" # UI admin
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+volumes:
+  mongo_data:

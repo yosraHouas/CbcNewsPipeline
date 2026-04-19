@@ -1,0 +1,49 @@
+﻿@page
+@using System.Text.Json
+@model Cbc.News.Dashboard.Pages.Notifications.IndexModel
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+
+<div class="container py-4" style="min-height:75vh;">
+    <h1><i class="bi bi-bell-fill text-warning me-2"></i>Notifications</h1>
+
+    <div class="mb-3">
+        <span id="signalrStatus" class="badge text-bg-secondary">Connecting...</span>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <i class="bi bi-bell me-2"></i>
+                Live ingestion events
+            </div>
+            <button id="clearNotificationHistoryBtn" class="btn btn-sm btn-outline-secondary">
+                Clear
+            </button>
+        </div>
+        <div class="card-body p-0">
+            <div id="notificationHistory" class="list-group list-group-flush">
+                <div class="list-group-item text-muted">No events yet.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    <script>
+        window.authConfig = {
+            token: @Html.Raw(JsonSerializer.Serialize(HttpContext.Session.GetString("token")))
+                };
+
+        if (window.resetNotificationsBadge) {
+            window.resetNotificationsBadge();
+        }
+    </script>
+
+    <script src="~/js/Notifications/realtime-ingestion.js" asp-append-version="true"></script>
+}

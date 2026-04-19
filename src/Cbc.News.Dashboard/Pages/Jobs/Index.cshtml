@@ -1,0 +1,40 @@
+﻿@page
+@using System.Text.Json
+@model Cbc.News.Dashboard.Pages.Jobs.IndexModel
+@{
+    ViewData["Title"] = "Jobs";
+}
+
+<div class="container py-4" style="min-height:75vh;">
+    <h1><i class="bi bi-gear-fill text-primary me-2"></i>Jobs</h1>
+    <p class="text-muted">Historique des jobs d’ingestion.</p>
+
+    <table class="table table-bordered table-striped mt-3">
+        <thead>
+            <tr>
+                <th>JobId</th>
+                <th>Feed</th>
+                <th>Status</th>
+                <th>Inserted</th>
+                <th>Updated</th>
+                <th>Started</th>
+                <th>Finished</th>
+            </tr>
+        </thead>
+        <tbody id="jobsTable">
+            <tr id="jobsEmptyRow">
+                <td colspan="7" class="text-center text-muted py-4">No jobs yet.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        window.authConfig = {
+            token: @Html.Raw(JsonSerializer.Serialize(HttpContext.Session.GetString("token")))
+                };
+    </script>
+
+    <script src="~/js/jobs/jobs.js" asp-append-version="true"></script>
+}

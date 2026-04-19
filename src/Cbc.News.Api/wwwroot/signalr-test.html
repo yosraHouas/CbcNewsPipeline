@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SignalR Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+</head>
+<body>
+
+<h2>SignalR Notifications</h2>
+
+<ul id="messages"></ul>
+
+<script>
+
+const connection = new signalR.HubConnectionBuilder()
+    .withUrl("https://localhost:7263/hubs/notifications")
+    .withAutomaticReconnect()
+    .build();
+
+connection.on("ingestionRequested", message => {
+
+    const li = document.createElement("li");
+
+    li.textContent =
+        "Ingestion requested → feed: " +
+        message.feed +
+        " jobId: " +
+        message.jobId;
+
+    document.getElementById("messages").appendChild(li);
+});
+
+connection.start()
+    .then(() => console.log("Connected to SignalR"))
+    .catch(err => console.error(err));
+
+</script>
+
+</body>
+</html>

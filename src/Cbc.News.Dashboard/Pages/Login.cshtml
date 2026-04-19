@@ -1,0 +1,66 @@
+﻿@page
+@model Cbc.News.Dashboard.Pages.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="d-flex align-items-center justify-content-center" style="min-height:75vh;">
+    <div class="card shadow-lg border-0" style="max-width:500px; width:100%; border-radius:15px;">
+        <div class="card-body p-4">
+
+            <h2 class="mb-3 text-center">Login</h2>
+            <p class="text-muted text-center">Connectez-vous au dashboard CBC News.</p>
+
+            <form method="post">
+
+                <div class="mb-3">
+                    <label for="demoAccount" class="form-label">Compte démo</label>
+                    <select id="demoAccount" class="form-select">
+                        <option value="">-- Sélectionner un compte --</option>
+                        <option value="admin">Admin</option>
+                        <option value="user">User</option>
+                    </select>
+                    <div class="form-text">
+                        Sélectionnez un compte pour remplir automatiquement les champs.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Username" class="form-label"></label>
+                    <input asp-for="Username" class="form-control" id="usernameInput" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label"></label>
+
+                    <div class="input-group">
+                        <input asp-for="Password" type="password" class="form-control" id="passwordInput" />
+                        <button type="button" class="btn btn-outline-secondary" id="togglePassword" aria-label="Afficher ou masquer le mot de passe">
+                            <span id="togglePasswordIcon">👁</span>
+                        </button>
+                    </div>
+
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="alert alert-danger">
+                        @Model.ErrorMessage
+                    </div>
+                }
+
+                <button type="submit" class="btn btn-primary w-100">
+                    Se connecter
+                </button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/login.js"></script>
+}

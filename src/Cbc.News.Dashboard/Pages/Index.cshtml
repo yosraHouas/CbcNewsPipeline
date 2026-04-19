@@ -1,0 +1,288 @@
+﻿@page
+@model IndexModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "CBC News Dashboard";
+}
+
+<div class="container py-4">
+
+    <!-- ============================= -->
+    <!-- Dashboard Header -->
+    <!-- ============================= -->
+
+    <h1 class="mb-3">CBC News Dashboard</h1>
+
+    <p class="text-muted">
+        Dashboard de suivi du pipeline d’ingestion CBC News.
+    </p>
+
+
+    <!-- ============================= -->
+    <!-- Summary Cards (Stats) -->
+    <!-- ============================= -->
+    <!-- Ces cartes affichent les statistiques principales :
+         - nombre de jobs récents
+         - nombre de stories affichées
+         - statut de la connexion SignalR -->
+
+    <div class="row g-3 mb-4">
+        <div class="row g-3 mb-4">
+
+            @if (Model.IsAdmin)
+            {
+                <div class="col-md-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h6 class="text-muted"><i class="bi bi-gear me-2"></i>Jobs récents</h6>
+                            <h2 id="jobsCount">-</h2>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="@(Model.IsAdmin ? "col-md-4" : "col-md-6")">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted"><i class="bi bi-newspaper me-2"></i>Stories affichées</h6>
+                        <h2 id="storiesCount">-</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="@(Model.IsAdmin ? "col-md-4" : "col-md-6")">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted"><i class="bi bi-broadcast me-2"></i>SignalR</h6>
+                        <h2 id="signalrHomeStatus">-</h2>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+     
+
+    <!-- ============================= -->
+    <!-- Start Ingestion Action -->
+    <!-- ============================= -->
+    <!-- Cette section permet de lancer une ingestion
+         directement depuis le dashboard, sans passer par Swagger -->
+    @if (Model.IsAdmin)
+    {
+        <div class="row g-3 mb-4">
+            <div class="col-lg-8">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-play-circle me-2"></i>
+                            Start Ingestion
+                        </h5>
+
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-5">
+                                <label for="feedSelect" class="form-label">Feed</label>
+                                <select id="feedSelect" class="form-select">
+                                    <option value="topstories">Top Stories</option>
+                                    <option value="technology">Technology</option>
+                                    <option value="montreal">Montreal</option>
+                                    <option value="politics">Politics</option>
+                                    <option value="business">Business</option>
+                                    <option value="canada">Canada</option>
+                                    <option value="world">World</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <button id="startIngestionBtn" class="btn btn-primary w-100">
+                                    <i class="bi bi-cloud-arrow-down me-2"></i>
+                                    Start ingestion
+                                </button>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div id="ingestionMessage" class="fw-semibold"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-diagram-3 me-2"></i>
+                            Pipeline Status
+                        </h5>
+
+                        <div class="mb-2">
+                            Worker :
+                            <span id="workerStatus" class="badge bg-success">Running</span>
+                        </div>
+
+                        <div class="mb-2">
+                            Last feed :
+                            <span id="lastFeed">-</span>
+                        </div>
+
+                        <div class="mb-2">
+                            Stories processed :
+                            <span id="storiesProcessed">0</span>
+                        </div>
+
+                        <div>
+                            Last run :
+                            <span id="lastRun">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <!-- ============================= -->
+    <!-- Ingestion Chart -->
+    <!-- ============================= -->
+    <!-- Graphique Chart.js affichant
+         le nombre de stories insérées par ingestion -->
+    @if (Model.IsAdmin)
+{
+    <div class="row g-3 mb-4">
+
+        <div class="col-12">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        <i class="bi bi-bar-chart-line me-2"></i>
+                        Ingestions Overview
+                    </h5>
+
+                    <!-- Canvas utilisé par Chart.js -->
+                    <canvas id="jobsChart" height="100"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+     
+    }
+
+    <!-- ============================= -->
+    <!-- Navigation Cards -->
+    <!-- ============================= -->
+    <!-- Ces cartes permettent d'accéder
+         aux différentes pages du dashboard -->
+
+    <div class="row mt-4 g-3">
+
+        @if (Model.IsAdmin)
+        {
+            <!-- Jobs Page -->
+            <div class="col-md-4">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        <i class="bi bi-gear-fill text-primary me-2"></i>
+                        Jobs
+                    </h5>
+
+                    <p class="card-text">
+                        Consulter l’historique des ingestions et leur statut.
+                    </p>
+
+                    <a asp-page="/Jobs/Index" class="btn btn-primary">
+                        Voir les jobs
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+        <!-- Stories Page -->
+        <div class="col-md-4">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        <i class="bi bi-newspaper text-success me-2"></i>
+                        Stories
+                    </h5>
+
+                    <p class="card-text">
+                        Voir les articles récupérés depuis le flux RSS CBC.
+                    </p>
+
+                    <a asp-page="/Stories/Index" class="btn btn-primary">
+                        Voir les stories
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Notifications Page -->
+        <div class="col-md-4">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        <i class="bi bi-bell-fill text-warning me-2"></i>
+                        Notifications
+                    </h5>
+
+                    <p class="card-text">
+                        Suivre les notifications temps réel via SignalR.
+                    </p>
+
+                    <a asp-page="/Notifications/Index" class="btn btn-primary">
+                        Voir les notifications
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ============================= -->
+<!-- Page Scripts -->
+<!-- ============================= -->
+<!-- Chart.js : bibliothèque graphique
+     dashboard.js : logique de la home
+     (chargement stats, SignalR, graphique, démarrage d’ingestion) -->
+
+
+@section Scripts {
+    <script>
+        window.authConfig = {
+            token: @Html.Raw(JsonSerializer.Serialize(HttpContext.Session.GetString("token")))
+                };
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="~/js/dashboard/dashboard.js" asp-append-version="true"></script>
+}
